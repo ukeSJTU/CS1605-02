@@ -7,7 +7,7 @@
 int main()
 {
     HumanStrategy *humanStrategy = new HumanStrategy();
-    SimpleAIStrategy *enemyStrategy = new SimpleAIStrategy();
+    GreedyAIStrategy *enemyStrategy = new GreedyAIStrategy();
 
     Player human(humanStrategy);
     Player ai(enemyStrategy);
