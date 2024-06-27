@@ -100,18 +100,30 @@ public:
      */
     void heal(int amount);
 
+    /**
+     * @brief Boosts the attack power of the slime.
+     */
     void boostAttack() { attackBoosted = true; }
+
+    /**
+     * @brief Resets the attack boost of the slime.
+     */
     void resetAttackBoost() { attackBoosted = false; }
+
+    /**
+     * @brief Checks if the slime's attack is currently boosted.
+     * @return true if the slime's attack is boosted, false otherwise.
+     */
     bool isAttackBoosted() const { return attackBoosted; }
 
 private:
-    std::string name;          /**< The name of the slime */
-    SlimeType type;            /**< The type of the slime */
-    int maxHP;                 /**< The maximum hit points of the slime */
-    int currentHP;             /**< The current hit points of the slime */
-    int attack;                /**< The attack stat of the slime */
-    int defense;               /**< The defense stat of the slime */
-    int speed;                 /**< The speed stat of the slime */
-    std::vector<Skill> skills; /**< The skills possessed by the slime */
-    bool attackBoosted = false;
+    std::string name;           /**< The name of the slime */
+    SlimeType type;             /**< The type of the slime */
+    int maxHP;                  /**< The maximum hit points of the slime */
+    int currentHP;              /**< The current hit points of the slime */
+    int attack;                 /**< The attack stat of the slime */
+    int defense;                /**< The defense stat of the slime */
+    int speed;                  /**< The speed stat of the slime */
+    std::vector<Skill> skills;  /**< The skills possessed by the slime */
+    bool attackBoosted = false; /**< Flag indicating if the slime's attack is currently boosted */
 };
