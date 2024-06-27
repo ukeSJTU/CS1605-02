@@ -123,8 +123,8 @@ Slime *HumanStrategy::chooseNextSlime(const std::vector<Slime *> &slimes, const 
 Action SimpleAIStrategy::chooseAction(const Engine &engine)
 {
     // simple ai controlled enemy won't change slime during battle unless their current one dies and is forced to choose a new slime
-    // if enemy's current slime has type advantage(effectiveness) over player's current slime, use skill 2
-    // else, always use skill 1
+    // if enemy's current slime has type advantage(effectiveness) over player's current slime, use the second skill
+    // else, always use the first skill
     const Slime *slime = engine.getEnemyActiveSlime(); // enemy's slime
     const Slime *playerCurrentSlime = engine.getPlayerActiveSlime();
     if ((slime->getType() == SlimeType::Water && playerCurrentSlime->getType() == SlimeType::Fire) ||
@@ -357,14 +357,6 @@ Action PotionGreedyAIStrategy::chooseAction(const Engine &engine)
     // If we can't or shouldn't use potions, use the greedy strategy
     Action greedyAction = GreedyAIStrategy::chooseAction(engine);
 
-    // If a slime was defeated last turn, we can use Revival Potion next turn
-    // if (greedyAction.getType() == ActionType::ChangeSlime &&
-    //     std::any_of(enemySlimes.begin(), enemySlimes.end(), [](const Slime *s)
-    //                 { return s->isDefeated(); }))
-    // {
-    //     const_cast<Player &>(enemyPlayer).setCanUseRevivalPotion(true);
-    // }
-
     // Don't change slime if it has attack boost, fallback to simpleAI strategy
     if (greedyAction.getType() == ActionType::ChangeSlime && enemySlime->isAttackBoosted())
     {
@@ -384,8 +376,5 @@ bool PotionGreedyAIStrategy::shouldUseRevivalPotion(const Player &player)
 
 bool PotionGreedyAIStrategy::shouldUseAttackPotion(const Slime *enemySlime, const Slime *playerSlime)
 {
-    bool f1 = enemySlime->isAttackBoosted();
-    bool f2 = isEffectiveAgainst(playerSlime->getType(), enemySlime->getType());
-    // std::cout << "Is attack boosted? " << f1 << " Is type disadvantaged? " << f2 << std::endl;
     return !enemySlime->isAttackBoosted() && !isEffectiveAgainst(playerSlime->getType(), enemySlime->getType());
 }

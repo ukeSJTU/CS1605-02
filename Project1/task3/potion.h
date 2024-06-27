@@ -1,3 +1,4 @@
+#pragma once
 /**
  * @class Potion
  * @brief Represents a potion that can be used in the game.

@@ -59,7 +59,6 @@ void Engine::processRound()
     std::cout << "------------------------------------" << std::endl;
     std::cout << "Round " << round << std::endl;
     executeTurn();
-    // updateGameState();
 }
 
 void Engine::executeTurn()
@@ -226,16 +225,6 @@ bool Engine::executeAction(Player &attacker, Player &defender, const Action &act
             std::cout << "Enemy uses Revival Potion" << std::endl;
             // find the inactive enemy's slime that is defeated and revive it
             enemy.usePotion(Potion::Type::Revival, nullptr); // This holds because in task 3, only enemy has potions to use
-
-            // auto defeatedSlime = std::find_if(defender.getSlimes().begin(), defender.getSlimes().end(),
-            //                                   [](const Slime *s)
-            //                                   { return s->isDefeated(); });
-
-            // if (defeatedSlime != defender.getSlimes().end())
-            // {
-            //     int healAmount = (*defeatedSlime)->getMaxHP() / 2; // Heal for half of max HP
-            //     (*defeatedSlime)->heal(healAmount);
-            // }
         }
         else if (action.getIndex() == 1)
         {
@@ -257,14 +246,7 @@ int Engine::calculateDamage(const Slime &attacker, const Slime &defender, const 
 {
     float effectiveness = getTypeEffectiveness(skill.getType(), defender.getType());
     float damage = (skill.getPower() * attacker.getAttack() / float(defender.getDefense())) * effectiveness;
-    // if attacker is boosted, double the damage. This should happen before rounding the damage
-    // if (attacker.isAttackBoosted())
-    // {
-    //     std::cout << attacker.getName() << " is boosted!" << std::endl;
-    //     damage = damage * 2;
-    // }
-    std::cout << attacker.getName() << " causes " << damage << " damage to " << defender.getName()
-              << "|" << damage << " = " << skill.getPower() << " * " << attacker.getAttack() << " / " << defender.getDefense() << " * " << effectiveness << std::endl;
+    // NOTE: we don't multiply damage by 2 here for attack potion, because the logic is that if a slime is boosted by attack potion, its attack will be doubled
     return std::max(1, static_cast<int>(std::round(damage)));
 }
 
@@ -294,31 +276,6 @@ float Engine::getTypeEffectiveness(SkillType attackType, SlimeType defenderType)
 void Engine::displayStatus() const
 {
     std::cout << "Your " << playerActiveSlime->getName() << ": HP " << playerActiveSlime->getCurrentHP() << " || Enemy's " << enemyActiveSlime->getName() << ": HP " << enemyActiveSlime->getCurrentHP() << std::endl;
-    // std::cout << enemy.getPotions().size() << " potions left" << std::endl;
-    // for (auto potion : enemy.getPotions())
-    // {
-    //     if (potion.isUsed() == true)
-    //     {
-    //         std::cout << "Used" << "  ";
-    //     }
-    //     else
-    //     {
-    //         std::cout << "Unused" << "  ";
-    //     }
-    //     switch (potion.getType())
-    //     {
-    //     case Potion::Type::Revival:
-    //         std::cout << "Revival" << "| ";
-    //         break;
-    //     case Potion::Type::Attack:
-    //         std::cout << "Attack" << "| ";
-    //         break;
-
-    //     default:
-    //         break;
-    //     }
-    // }
-    // std::cout << std::endl;
     return;
 }
 

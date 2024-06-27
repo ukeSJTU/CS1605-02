@@ -111,17 +111,10 @@ public:
      */
     bool canUseAttackPotion() const;
 
-    /**
-     * @brief Sets whether the player can use a revival potion in the next turn.
-     * @param can true to allow using a revival potion, false to disallow.
-     */
-    void setCanUseRevivalPotion(bool can);
-
 private:
     std::vector<Slime *> slimes; /**< Vector of pointers to the player's Slime objects */
     Slime *activeSlime;          /**< Pointer to the currently active Slime */
     Strategy *strategy;          /**< Pointer to the Strategy object guiding the player's decisions */
 
-    std::vector<Potion> potions;        /**< Vector of potions the player can use */
-    bool canUseRevivalNextTurn = false; /**<  Status of whether user can use revival potion next turn*/
+    std::vector<Potion> potions; /**< Vector of potions the player can use */
 };
