@@ -42,3 +42,21 @@ void Slime::heal(int amount)
 {
     currentHP = std::min(maxHP, currentHP + amount);
 }
+
+void Slime::boostAttack()
+{
+    if (attackBoosted == false)
+    {
+        attackBoosted = true;
+        attack = attack * 2;
+    }
+}
+
+void Slime::resetAttackBoost()
+{
+    if (attackBoosted == true)
+    {
+        attackBoosted = false;
+        attack = attack / 2;
+    }
+}

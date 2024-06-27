@@ -343,7 +343,7 @@ Action PotionGreedyAIStrategy::chooseAction(const Engine &engine)
     {
         if (const_cast<Player &>(enemyPlayer).usePotion(Potion::Type::Revival, nullptr))
         {
-            std::cout << "Enemy uses Revival Potion" << std::endl;
+            // std::cout << "Enemy uses Revival Potion" << std::endl;
             return Action(ActionType::UsePotion, 0, 5);
         }
     }
@@ -353,7 +353,7 @@ Action PotionGreedyAIStrategy::chooseAction(const Engine &engine)
     {
         if (const_cast<Player &>(enemyPlayer).usePotion(Potion::Type::Attack, const_cast<Slime *>(enemySlime)))
         {
-            std::cout << "Enemy uses Attack Potion on " << enemySlime->getName() << std::endl;
+            // std::cout << "Enemy uses Attack Potion on " << enemySlime->getName() << std::endl;
             return Action(ActionType::UsePotion, 1, 5);
         }
     }

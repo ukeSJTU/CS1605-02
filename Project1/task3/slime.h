@@ -103,12 +103,12 @@ public:
     /**
      * @brief Boosts the attack power of the slime.
      */
-    void boostAttack() { attackBoosted = true; }
+    void boostAttack();
 
     /**
      * @brief Resets the attack boost of the slime.
      */
-    void resetAttackBoost() { attackBoosted = false; }
+    void resetAttackBoost();
 
     /**
      * @brief Checks if the slime's attack is currently boosted.

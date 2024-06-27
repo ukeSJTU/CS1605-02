@@ -191,8 +191,16 @@ bool Engine::executeAction(Player &attacker, Player &defender, const Action &act
     }
     case ActionType::ChangeSlime:
     {
+        Slime *currentActiveSlime = attacker.getActiveSlime();
         Slime *newSlime = attacker.getSlimes()[action.getIndex()];
+        // remove attack potion if the slime is changed
+        if (currentActiveSlime->isAttackBoosted() == true)
+        {
+            currentActiveSlime->resetAttackBoost();
+        }
+
         attacker.setActiveSlime(newSlime);
+
         if (&attacker == &player)
         {
             setActiveSlimes(newSlime, enemyActiveSlime);
@@ -204,6 +212,36 @@ bool Engine::executeAction(Player &attacker, Player &defender, const Action &act
             std::cout << "Enemy sends ";
         }
         std::cout << attacker.getActiveSlime()->getName() << std::endl;
+        break;
+    }
+    case ActionType::UsePotion:
+    {
+        Slime *enemyActiveSlime = attacker.getActiveSlime(); // This holds because in task 3, only enemy has potions to use
+        // 0 stands for Revival potion, 1 stands for Attack potion
+        if (action.getIndex() == 0)
+        {
+            std::cout << "Enemy uses Revival Potion" << std::endl;
+            // find the inactive enemy's slime that is defeated and revive it
+
+            auto defeatedSlime = std::find_if(defender.getSlimes().begin(), defender.getSlimes().end(),
+                                              [](const Slime *s)
+                                              { return s->isDefeated(); });
+
+            if (defeatedSlime != defender.getSlimes().end())
+            {
+                int healAmount = (*defeatedSlime)->getMaxHP() / 2; // Heal for half of max HP
+                (*defeatedSlime)->heal(healAmount);
+            }
+        }
+        else if (action.getIndex() == 1)
+        {
+            std::cout << "Enemy uses Attack Potion on " << enemyActiveSlime->getName() << std::endl;
+            enemyActiveSlime->boostAttack();
+        }
+        else
+        {
+            std::cerr << "Invalid action index for action of type UsePotion" << std::endl;
+        }
         break;
     }
     }

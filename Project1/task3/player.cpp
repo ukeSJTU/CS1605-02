@@ -1,5 +1,6 @@
 #include "player.h"
 #include "engine.h"
+#include <iostream>
 
 Player::Player(Strategy *strategy) : strategy(strategy), activeSlime(nullptr) {}
 
@@ -83,7 +84,22 @@ bool Player::usePotion(Potion::Type type, Slime *target)
         }
         else if (type == Potion::Type::Revival)
         {
-            // Implement revival logic
+            // Find the first defeated slime and revive it
+            auto defeatedSlime = std::find_if(slimes.begin(), slimes.end(),
+                                              [](const Slime *s)
+                                              { return s->isDefeated(); });
+            if (defeatedSlime != slimes.end())
+            {
+                int healAmount = (*defeatedSlime)->getMaxHP() / 2; // Heal for half of max HP
+                (*defeatedSlime)->heal(healAmount);
+                std::cout << (*defeatedSlime)->getName() << " has been revived with "
+                          << healAmount << " HP!" << std::endl;
+            }
+            else
+            {
+                std::cout << "No defeated slime to revive!" << std::endl;
+                return false; // Potion wasn't actually used
+            }
         }
         return true;
     }
