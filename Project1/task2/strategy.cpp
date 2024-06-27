@@ -227,3 +227,106 @@ Slime *SimpleAIStrategy::chooseNextSlime(const std::vector<Slime *> &slimes, con
         }
     }
 }
+
+bool GreedyAIStrategy::isEffectiveAgainst(SlimeType attackerType, SlimeType defenderType) const
+{
+    return (attackerType == SlimeType::Water && defenderType == SlimeType::Fire) ||
+           (attackerType == SlimeType::Fire && defenderType == SlimeType::Grass) ||
+           (attackerType == SlimeType::Grass && defenderType == SlimeType::Water);
+}
+
+Slime *GreedyAIStrategy::findEffectiveSlime(const std::vector<Slime *> &slimes, const Slime *targetSlime) const
+{
+    for (Slime *slime : slimes)
+    {
+        if (!slime->isDefeated() && isEffectiveAgainst(slime->getType(), targetSlime->getType()))
+        {
+            return slime;
+        }
+    }
+    return nullptr;
+}
+
+Action GreedyAIStrategy::chooseAction(const Engine &engine)
+{
+    const Slime *playerSlime = engine.getPlayerActiveSlime();
+    const Slime *enemySlime = engine.getEnemyActiveSlime();
+    const std::vector<Slime *> &enemySlimes = engine.getEnemy().getSlimes();
+
+    // Check if there's a more effective slime to switch to
+    Slime *effectiveSlime = findEffectiveSlime(enemySlimes, playerSlime);
+    if (effectiveSlime && effectiveSlime != enemySlime)
+    {
+        return Action(ActionType::ChangeSlime, std::find(enemySlimes.begin(), enemySlimes.end(), effectiveSlime) - enemySlimes.begin(), 6);
+    }
+
+    // Check if current slime is at a disadvantage
+    if (isEffectiveAgainst(playerSlime->getType(), enemySlime->getType()))
+    {
+        // Try to switch to a non-disadvantaged slime
+        for (size_t i = 0; i < enemySlimes.size(); ++i)
+        {
+            if (!enemySlimes[i]->isDefeated() && enemySlimes[i] != enemySlime &&
+                !isEffectiveAgainst(playerSlime->getType(), enemySlimes[i]->getType()))
+            {
+                return Action(ActionType::ChangeSlime, i, 6);
+            }
+        }
+    }
+
+    // If no better option, use a skill
+    // the strategy follows that of task1
+    // if enemy's slime has type advantage over player's slime, use skill 2, if not, use skill 1
+    if (isEffectiveAgainst(enemySlime->getType(), playerSlime->getType()))
+    {
+        return Action(ActionType::UseSkill, 1, 0);
+    }
+    else
+    {
+        return Action(ActionType::UseSkill, 0, 0);
+    }
+}
+
+Slime *GreedyAIStrategy::chooseStartingSlime(const std::vector<Slime *> &slimes, const Engine &engine)
+{
+    // Choose a slime that is effective against the player's starting slime, if possible
+    Slime *effectiveSlime = findEffectiveSlime(slimes, engine.getPlayerActiveSlime());
+    if (effectiveSlime)
+    {
+        return effectiveSlime;
+    }
+
+    // If no effective slime, choose the first non-defeated slime
+    for (Slime *slime : slimes)
+    {
+        if (!slime->isDefeated())
+        {
+            return slime;
+        }
+    }
+
+    // This should never happen if the game is set up correctly
+    return slimes[0];
+}
+
+Slime *GreedyAIStrategy::chooseNextSlime(const std::vector<Slime *> &slimes, const Engine &engine)
+{
+    // First, try to find a slime effective against the player's active slime
+    Slime *effectiveSlime = findEffectiveSlime(slimes, engine.getPlayerActiveSlime());
+    if (effectiveSlime)
+    {
+        return effectiveSlime;
+    }
+
+    // If no effective slime, choose the first non-defeated slime
+    for (Slime *slime : slimes)
+    {
+        if (!slime->isDefeated())
+        {
+            return slime;
+        }
+    }
+
+    // This should never happen if the game is set up correctly
+    return slimes[0];
+}
