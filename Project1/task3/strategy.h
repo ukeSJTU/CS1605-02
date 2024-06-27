@@ -92,7 +92,7 @@ public:
  * This class implements the Strategy interface for an AI player
  * with a greedy decision-making logic, focusing on type advantages.
  */
-class GreedyAIStrategy : public Strategy
+class GreedyAIStrategy : public SimpleAIStrategy
 {
 public:
     Action chooseAction(const Engine &engine) override;
@@ -126,6 +126,7 @@ public:
 private:
     /**
      * @brief Checks if the player should use a revival potion.
+     * @details Player will use a revival potion to heal half the max HP of an inactive defeated slime.
      * @param player The player object.
      * @return true if the player should use a revival potion, false otherwise.
 
@@ -133,6 +134,7 @@ private:
     bool shouldUseRevivalPotion(const Player &player);
     /**
      * @brief Checks if the player should use an attack potion.
+     * @details Enemy will use attack potion when the current active slime is not at type disadvantage and is not attack boosted.
      * @param enemySlime The enemy slime object.
      * @return true if the player should use an attack potion, false otherwise.
      */

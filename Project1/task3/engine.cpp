@@ -148,6 +148,8 @@ bool Engine::executeAction(Player &attacker, Player &defender, const Action &act
 
         if (defenderSlime->isDefeated())
         {
+            // remove the attack potion if the slime is killed
+            defenderSlime->resetAttackBoost();
             if (&defender == &player)
             {
                 // if player is the defender
@@ -196,6 +198,7 @@ bool Engine::executeAction(Player &attacker, Player &defender, const Action &act
         // remove attack potion if the slime is changed
         if (currentActiveSlime->isAttackBoosted() == true)
         {
+            std::cout << currentActiveSlime->getName() << " is no longer boosted!" << std::endl;
             currentActiveSlime->resetAttackBoost();
         }
 
@@ -222,21 +225,23 @@ bool Engine::executeAction(Player &attacker, Player &defender, const Action &act
         {
             std::cout << "Enemy uses Revival Potion" << std::endl;
             // find the inactive enemy's slime that is defeated and revive it
+            enemy.usePotion(Potion::Type::Revival, nullptr); // This holds because in task 3, only enemy has potions to use
 
-            auto defeatedSlime = std::find_if(defender.getSlimes().begin(), defender.getSlimes().end(),
-                                              [](const Slime *s)
-                                              { return s->isDefeated(); });
+            // auto defeatedSlime = std::find_if(defender.getSlimes().begin(), defender.getSlimes().end(),
+            //                                   [](const Slime *s)
+            //                                   { return s->isDefeated(); });
 
-            if (defeatedSlime != defender.getSlimes().end())
-            {
-                int healAmount = (*defeatedSlime)->getMaxHP() / 2; // Heal for half of max HP
-                (*defeatedSlime)->heal(healAmount);
-            }
+            // if (defeatedSlime != defender.getSlimes().end())
+            // {
+            //     int healAmount = (*defeatedSlime)->getMaxHP() / 2; // Heal for half of max HP
+            //     (*defeatedSlime)->heal(healAmount);
+            // }
         }
         else if (action.getIndex() == 1)
         {
             std::cout << "Enemy uses Attack Potion on " << enemyActiveSlime->getName() << std::endl;
-            enemyActiveSlime->boostAttack();
+            // enemyActiveSlime->boostAttack();
+            enemy.usePotion(Potion::Type::Attack, enemyActiveSlime);
         }
         else
         {
@@ -251,7 +256,15 @@ bool Engine::executeAction(Player &attacker, Player &defender, const Action &act
 int Engine::calculateDamage(const Slime &attacker, const Slime &defender, const Skill &skill)
 {
     float effectiveness = getTypeEffectiveness(skill.getType(), defender.getType());
-    float damage = (skill.getPower() * attacker.getAttack() / defender.getDefense()) * effectiveness;
+    float damage = (skill.getPower() * attacker.getAttack() / float(defender.getDefense())) * effectiveness;
+    // if attacker is boosted, double the damage. This should happen before rounding the damage
+    // if (attacker.isAttackBoosted())
+    // {
+    //     std::cout << attacker.getName() << " is boosted!" << std::endl;
+    //     damage = damage * 2;
+    // }
+    std::cout << attacker.getName() << " causes " << damage << " damage to " << defender.getName()
+              << "|" << damage << " = " << skill.getPower() << " * " << attacker.getAttack() << " / " << defender.getDefense() << " * " << effectiveness << std::endl;
     return std::max(1, static_cast<int>(std::round(damage)));
 }
 
@@ -281,6 +294,31 @@ float Engine::getTypeEffectiveness(SkillType attackType, SlimeType defenderType)
 void Engine::displayStatus() const
 {
     std::cout << "Your " << playerActiveSlime->getName() << ": HP " << playerActiveSlime->getCurrentHP() << " || Enemy's " << enemyActiveSlime->getName() << ": HP " << enemyActiveSlime->getCurrentHP() << std::endl;
+    // std::cout << enemy.getPotions().size() << " potions left" << std::endl;
+    // for (auto potion : enemy.getPotions())
+    // {
+    //     if (potion.isUsed() == true)
+    //     {
+    //         std::cout << "Used" << "  ";
+    //     }
+    //     else
+    //     {
+    //         std::cout << "Unused" << "  ";
+    //     }
+    //     switch (potion.getType())
+    //     {
+    //     case Potion::Type::Revival:
+    //         std::cout << "Revival" << "| ";
+    //         break;
+    //     case Potion::Type::Attack:
+    //         std::cout << "Attack" << "| ";
+    //         break;
+
+    //     default:
+    //         break;
+    //     }
+    // }
+    // std::cout << std::endl;
     return;
 }
 

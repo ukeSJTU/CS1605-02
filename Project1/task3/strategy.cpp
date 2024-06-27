@@ -333,46 +333,43 @@ Slime *GreedyAIStrategy::chooseNextSlime(const std::vector<Slime *> &slimes, con
 
 Action PotionGreedyAIStrategy::chooseAction(const Engine &engine)
 {
+    // As in task2, enemy's strategy would prioritize changing slime if it is at a type disadvantage to players current active slime
+    // But in task3, if the condition to use potions is met, ai would choose to use potion instead of changing slime.
+    // And ai would use revival instead of attack potion if both potions can be used.
+
     const Player &enemyPlayer = engine.getEnemy();
     const Slime *playerSlime = engine.getPlayerActiveSlime();
     const Slime *enemySlime = engine.getEnemyActiveSlime();
     const std::vector<Slime *> &enemySlimes = enemyPlayer.getSlimes();
 
-    // Check if we can use Revival Potion
+    // Check if we can and should use Revival Potion
     if (enemyPlayer.canUseRevivalPotion() && shouldUseRevivalPotion(enemyPlayer))
     {
-        if (const_cast<Player &>(enemyPlayer).usePotion(Potion::Type::Revival, nullptr))
-        {
-            // std::cout << "Enemy uses Revival Potion" << std::endl;
-            return Action(ActionType::UsePotion, 0, 5);
-        }
+        return Action(ActionType::UsePotion, 0, 5);
     }
 
-    // Check if we should use Attack Potion
-    if (shouldUseAttackPotion(enemySlime, playerSlime))
+    // Check if we can and should use Attack Potion
+    if (enemyPlayer.canUseAttackPotion() && shouldUseAttackPotion(enemySlime, playerSlime))
     {
-        if (const_cast<Player &>(enemyPlayer).usePotion(Potion::Type::Attack, const_cast<Slime *>(enemySlime)))
-        {
-            // std::cout << "Enemy uses Attack Potion on " << enemySlime->getName() << std::endl;
-            return Action(ActionType::UsePotion, 1, 5);
-        }
+        return Action(ActionType::UsePotion, 1, 5);
     }
 
     // If we can't or shouldn't use potions, use the greedy strategy
     Action greedyAction = GreedyAIStrategy::chooseAction(engine);
 
     // If a slime was defeated last turn, we can use Revival Potion next turn
-    if (greedyAction.getType() == ActionType::ChangeSlime &&
-        std::any_of(enemySlimes.begin(), enemySlimes.end(), [](const Slime *s)
-                    { return s->isDefeated(); }))
-    {
-        const_cast<Player &>(enemyPlayer).setCanUseRevivalPotion(true);
-    }
+    // if (greedyAction.getType() == ActionType::ChangeSlime &&
+    //     std::any_of(enemySlimes.begin(), enemySlimes.end(), [](const Slime *s)
+    //                 { return s->isDefeated(); }))
+    // {
+    //     const_cast<Player &>(enemyPlayer).setCanUseRevivalPotion(true);
+    // }
 
-    // Don't change slime if it has attack boost
+    // Don't change slime if it has attack boost, fallback to simpleAI strategy
     if (greedyAction.getType() == ActionType::ChangeSlime && enemySlime->isAttackBoosted())
     {
-        return Action(ActionType::UseSkill, 0, 0); // Use skill instead
+        Action simpleAction = SimpleAIStrategy::chooseAction(engine);
+        return simpleAction;
     }
 
     return greedyAction;
@@ -387,5 +384,8 @@ bool PotionGreedyAIStrategy::shouldUseRevivalPotion(const Player &player)
 
 bool PotionGreedyAIStrategy::shouldUseAttackPotion(const Slime *enemySlime, const Slime *playerSlime)
 {
+    bool f1 = enemySlime->isAttackBoosted();
+    bool f2 = isEffectiveAgainst(playerSlime->getType(), enemySlime->getType());
+    // std::cout << "Is attack boosted? " << f1 << " Is type disadvantaged? " << f2 << std::endl;
     return !enemySlime->isAttackBoosted() && !isEffectiveAgainst(playerSlime->getType(), enemySlime->getType());
 }

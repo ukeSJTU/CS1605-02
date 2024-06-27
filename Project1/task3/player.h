@@ -100,10 +100,16 @@ public:
     bool usePotion(Potion::Type type, Slime *target);
 
     /**
-     * @brief Checks if the player can use a revival potion.
+     * @brief Checks if the player has unused revival potions.
      * @return true if a revival potion can be used, false otherwise.
      */
     bool canUseRevivalPotion() const;
+
+    /**
+     * @brief Checks if the player has unused revival potions.
+     * @return true if a revival potion can be used, false otherwise.
+     */
+    bool canUseAttackPotion() const;
 
     /**
      * @brief Sets whether the player can use a revival potion in the next turn.

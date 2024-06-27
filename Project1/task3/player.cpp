@@ -77,7 +77,7 @@ bool Player::usePotion(Potion::Type type, Slime *target)
                            { return p.getType() == type && !p.isUsed(); });
     if (it != potions.end())
     {
-        it->use();
+        it->use(); // set the potion to used
         if (type == Potion::Type::Attack && target)
         {
             target->boostAttack();
@@ -92,8 +92,6 @@ bool Player::usePotion(Potion::Type type, Slime *target)
             {
                 int healAmount = (*defeatedSlime)->getMaxHP() / 2; // Heal for half of max HP
                 (*defeatedSlime)->heal(healAmount);
-                std::cout << (*defeatedSlime)->getName() << " has been revived with "
-                          << healAmount << " HP!" << std::endl;
             }
             else
             {
@@ -108,7 +106,37 @@ bool Player::usePotion(Potion::Type type, Slime *target)
 
 bool Player::canUseRevivalPotion() const
 {
-    return canUseRevivalNextTurn;
+    if (std::any_of(potions.begin(), potions.end(), [](const Potion &p)
+                    { return p.getType() == Potion::Type::Revival && !p.isUsed(); }))
+    {
+        // std::cout << "Enemy has revival potion." << std::endl;
+        return true;
+    }
+    else
+    {
+        // std::cout << "Enemy does not have revival potion." << std::endl;
+        return false;
+    }
+    // return
+}
+
+bool Player::canUseAttackPotion() const
+{
+
+    if (std::any_of(potions.begin(), potions.end(), [](const Potion &p)
+                    { return p.getType() == Potion::Type::Attack && !p.isUsed(); }))
+    {
+        // std::cout << "Enemy has attack potion." << std::endl;
+        return true;
+    }
+    else
+    {
+        // std::cout << "Enemy does not have attack potion." << std::endl;
+        return false;
+    }
+
+    // return std::any_of(potions.begin(), potions.end(), [](const Potion &p)
+    //                    { return p.getType() == Potion::Type::Attack && !p.isUsed(); });
 }
 
 void Player::setCanUseRevivalPotion(bool can)
