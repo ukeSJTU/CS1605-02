@@ -79,10 +79,36 @@ public:
      */
     bool isDefeated() const;
 
+    /**
+     * @brief Adds a potion to the player's inventory.
+     * @param potion The potion to be added.
+     */
     void addPotion(const Potion &potion);
+
+    /**
+     * @brief Gets the player's potion inventory.
+     * @return A const reference to the vector of potions.
+     */
     const std::vector<Potion> &getPotions() const;
+
+    /**
+     * @brief Uses a potion of the specified type on the target slime.
+     * @param type The type of potion to use.
+     * @param target Pointer to the target slime (can be nullptr for certain potion types).
+     * @return true if the potion was successfully used, false otherwise.
+     */
     bool usePotion(Potion::Type type, Slime *target);
+
+    /**
+     * @brief Checks if the player can use a revival potion.
+     * @return true if a revival potion can be used, false otherwise.
+     */
     bool canUseRevivalPotion() const;
+
+    /**
+     * @brief Sets whether the player can use a revival potion in the next turn.
+     * @param can true to allow using a revival potion, false to disallow.
+     */
     void setCanUseRevivalPotion(bool can);
 
 private:
@@ -90,6 +116,6 @@ private:
     Slime *activeSlime;          /**< Pointer to the currently active Slime */
     Strategy *strategy;          /**< Pointer to the Strategy object guiding the player's decisions */
 
-    std::vector<Potion> potions;
-    bool canUseRevivalNextTurn = false;
+    std::vector<Potion> potions;        /**< Vector of potions the player can use */
+    bool canUseRevivalNextTurn = false; /**<  Status of whether user can use revival potion next turn*/
 };
