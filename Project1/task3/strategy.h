@@ -124,6 +124,17 @@ public:
     Action chooseAction(const Engine &engine) override;
 
 private:
+    /**
+     * @brief Checks if the player should use a revival potion.
+     * @param player The player object.
+     * @return true if the player should use a revival potion, false otherwise.
+
+     */
     bool shouldUseRevivalPotion(const Player &player);
+    /**
+     * @brief Checks if the player should use an attack potion.
+     * @param enemySlime The enemy slime object.
+     * @return true if the player should use an attack potion, false otherwise.
+     */
     bool shouldUseAttackPotion(const Slime *enemySlime, const Slime *playerSlime);
 };
