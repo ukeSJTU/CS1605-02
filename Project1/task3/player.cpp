@@ -58,3 +58,44 @@ bool Player::isDefeated() const
     }
     return true;
 }
+
+void Player::addPotion(const Potion &potion)
+{
+    potions.push_back(potion);
+}
+
+const std::vector<Potion> &Player::getPotions() const
+{
+    return potions;
+}
+
+bool Player::usePotion(Potion::Type type, Slime *target)
+{
+    auto it = std::find_if(potions.begin(), potions.end(),
+                           [type](const Potion &p)
+                           { return p.getType() == type && !p.isUsed(); });
+    if (it != potions.end())
+    {
+        it->use();
+        if (type == Potion::Type::Attack && target)
+        {
+            target->boostAttack();
+        }
+        else if (type == Potion::Type::Revival)
+        {
+            // Implement revival logic
+        }
+        return true;
+    }
+    return false;
+}
+
+bool Player::canUseRevivalPotion() const
+{
+    return canUseRevivalNextTurn;
+}
+
+void Player::setCanUseRevivalPotion(bool can)
+{
+    canUseRevivalNextTurn = can;
+}

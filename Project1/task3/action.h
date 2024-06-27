@@ -5,8 +5,9 @@
  */
 enum class ActionType
 {
-    UseSkill,   /**< Use a skill during the turn */
-    ChangeSlime /**< Change the active slime during the turn */
+    UseSkill,    /**< Use a skill during the turn */
+    ChangeSlime, /**< Change the active slime during the turn */
+    UsePotion    /**< Use a potion during the turn */
 };
 
 /**

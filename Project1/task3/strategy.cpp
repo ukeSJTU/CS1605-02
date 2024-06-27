@@ -330,3 +330,62 @@ Slime *GreedyAIStrategy::chooseNextSlime(const std::vector<Slime *> &slimes, con
     // This should never happen if the game is set up correctly
     return slimes[0];
 }
+
+Action PotionGreedyAIStrategy::chooseAction(const Engine &engine)
+{
+    const Player &enemyPlayer = engine.getEnemy();
+    const Slime *playerSlime = engine.getPlayerActiveSlime();
+    const Slime *enemySlime = engine.getEnemyActiveSlime();
+    const std::vector<Slime *> &enemySlimes = enemyPlayer.getSlimes();
+
+    // Check if we can use Revival Potion
+    if (enemyPlayer.canUseRevivalPotion() && shouldUseRevivalPotion(enemyPlayer))
+    {
+        if (const_cast<Player &>(enemyPlayer).usePotion(Potion::Type::Revival, nullptr))
+        {
+            std::cout << "Enemy uses Revival Potion" << std::endl;
+            return Action(ActionType::UsePotion, 0, 5);
+        }
+    }
+
+    // Check if we should use Attack Potion
+    if (shouldUseAttackPotion(enemySlime, playerSlime))
+    {
+        if (const_cast<Player &>(enemyPlayer).usePotion(Potion::Type::Attack, const_cast<Slime *>(enemySlime)))
+        {
+            std::cout << "Enemy uses Attack Potion on " << enemySlime->getName() << std::endl;
+            return Action(ActionType::UsePotion, 1, 5);
+        }
+    }
+
+    // If we can't or shouldn't use potions, use the greedy strategy
+    Action greedyAction = GreedyAIStrategy::chooseAction(engine);
+
+    // If a slime was defeated last turn, we can use Revival Potion next turn
+    if (greedyAction.getType() == ActionType::ChangeSlime &&
+        std::any_of(enemySlimes.begin(), enemySlimes.end(), [](const Slime *s)
+                    { return s->isDefeated(); }))
+    {
+        const_cast<Player &>(enemyPlayer).setCanUseRevivalPotion(true);
+    }
+
+    // Don't change slime if it has attack boost
+    if (greedyAction.getType() == ActionType::ChangeSlime && enemySlime->isAttackBoosted())
+    {
+        return Action(ActionType::UseSkill, 0, 0); // Use skill instead
+    }
+
+    return greedyAction;
+}
+
+bool PotionGreedyAIStrategy::shouldUseRevivalPotion(const Player &player)
+{
+    return std::any_of(player.getSlimes().begin(), player.getSlimes().end(),
+                       [](const Slime *s)
+                       { return s->isDefeated(); });
+}
+
+bool PotionGreedyAIStrategy::shouldUseAttackPotion(const Slime *enemySlime, const Slime *playerSlime)
+{
+    return !enemySlime->isAttackBoosted() && !isEffectiveAgainst(playerSlime->getType(), enemySlime->getType());
+}

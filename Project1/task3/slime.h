@@ -100,6 +100,10 @@ public:
      */
     void heal(int amount);
 
+    void boostAttack() { attackBoosted = true; }
+    void resetAttackBoost() { attackBoosted = false; }
+    bool isAttackBoosted() const { return attackBoosted; }
+
 private:
     std::string name;          /**< The name of the slime */
     SlimeType type;            /**< The type of the slime */
@@ -109,4 +113,5 @@ private:
     int defense;               /**< The defense stat of the slime */
     int speed;                 /**< The speed stat of the slime */
     std::vector<Skill> skills; /**< The skills possessed by the slime */
+    bool attackBoosted = false;
 };

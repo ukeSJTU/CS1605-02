@@ -7,10 +7,14 @@
 int main()
 {
     HumanStrategy *humanStrategy = new HumanStrategy();
-    SimpleAIStrategy *enemyStrategy = new SimpleAIStrategy();
+    PotionGreedyAIStrategy *enemyStrategy = new PotionGreedyAIStrategy();
 
     Player human(humanStrategy);
     Player ai(enemyStrategy);
+
+    ai.addPotion(Potion(Potion::Type::Revival));
+    ai.addPotion(Potion(Potion::Type::Attack));
+    ai.addPotion(Potion(Potion::Type::Attack));
 
     human.addSlime(new Slime("Green", SlimeType::Grass, 110, 10, 10, 10));
     human.addSlime(new Slime("Red", SlimeType::Fire, 100, 11, 10, 11));

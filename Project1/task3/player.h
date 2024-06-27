@@ -2,6 +2,7 @@
 #include <vector>
 #include "slime.h"
 #include "strategy.h"
+#include "potion.h"
 
 class Engine;
 
@@ -78,8 +79,17 @@ public:
      */
     bool isDefeated() const;
 
+    void addPotion(const Potion &potion);
+    const std::vector<Potion> &getPotions() const;
+    bool usePotion(Potion::Type type, Slime *target);
+    bool canUseRevivalPotion() const;
+    void setCanUseRevivalPotion(bool can);
+
 private:
     std::vector<Slime *> slimes; /**< Vector of pointers to the player's Slime objects */
     Slime *activeSlime;          /**< Pointer to the currently active Slime */
     Strategy *strategy;          /**< Pointer to the Strategy object guiding the player's decisions */
+
+    std::vector<Potion> potions;
+    bool canUseRevivalNextTurn = false;
 };

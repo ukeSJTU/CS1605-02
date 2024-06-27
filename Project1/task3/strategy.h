@@ -5,6 +5,7 @@
 
 class Engine;
 class Slime;
+class Player;
 
 /**
  * @class Strategy
@@ -98,7 +99,7 @@ public:
     Slime *chooseStartingSlime(const std::vector<Slime *> &slimes, const Engine &engine) override;
     Slime *chooseNextSlime(const std::vector<Slime *> &slimes, const Engine &engine) override;
 
-private:
+protected:
     /**
      * @brief Checks if one slime type is effective against another.
      * @param attackerType The type of the attacking slime.
@@ -107,6 +108,7 @@ private:
      */
     bool isEffectiveAgainst(SlimeType attackerType, SlimeType defenderType) const;
 
+private:
     /**
      * @brief Finds a slime that is effective against the given slime.
      * @param slimes Vector of available slimes to choose from.
@@ -114,4 +116,14 @@ private:
      * @return Pointer to an effective slime if found, nullptr otherwise.
      */
     Slime *findEffectiveSlime(const std::vector<Slime *> &slimes, const Slime *targetSlime) const;
+};
+
+class PotionGreedyAIStrategy : public GreedyAIStrategy
+{
+public:
+    Action chooseAction(const Engine &engine) override;
+
+private:
+    bool shouldUseRevivalPotion(const Player &player);
+    bool shouldUseAttackPotion(const Slime *enemySlime, const Slime *playerSlime);
 };
